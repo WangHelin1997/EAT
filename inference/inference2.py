@@ -11,6 +11,36 @@ import csv
 import os
 from tqdm import tqdm
 
+exclude_labels = [
+    "Speech",
+    "Male speech, man speaking",
+    "Female speech, woman speaking",
+    "Child speech, kid speaking",
+    "Conversation",
+    "Narration, monologue",
+    "Speech synthesizer",
+    "Babbling",
+    "Inside, small room",
+    "Inside, large room or hall",
+    "Inside, public space",
+    "Outside, urban or manmade",
+    "Outside, rural or natural",
+    "Reverberation",
+    "Echo",
+    "Noise",
+    "Environmental noise",
+    "Static",
+    "Distortion",
+    "Sidetone",
+    "Cacophony",
+    "White noise",
+    "Pink noise",
+    "Radio",
+    "Television",
+    "Field recording",
+    "Silence",
+]
+
 # global normalization for AudioSet as default (norm_mean=-4.268 && norm_std=4.569)
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -105,7 +135,7 @@ def main():
                 inference = {vocab[index.item()]: value.item() for index, value in zip(topk_indices[0], topk_values[0])}
                 output = []
                 for label,res in inference.items():
-                    if res > 0.1 and label != "Speech":
+                    if res > 0.1 and label not in exclude_labels:
                         output.append(label)
                 output = ", ".join(output)
                 save_list.append(source_file.split("/")[-1].replace(".wav","")+"\t"+output)
